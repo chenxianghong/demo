@@ -1,0 +1,201 @@
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title></title>
+	<style type="text/css">
+*{
+	padding: 0;
+	margin:0;
+}
+.table{
+	position: relative;
+	width:500px;
+	height: 500px;
+	margin: 80px auto;
+	overflow: hidden;
+}
+.td{
+	width:20px;
+	height:20px;
+	background-color: grey;
+}
+.snack1{
+	position: absolute;
+	display: inline-block;
+	width: 20px;
+	height:20px;
+	background-color: pink;
+}
+.food{
+	position: absolute;
+	width:20px;
+	height:20px;
+	background-color: green;
+}
+.snackbody{
+	position: absolute;
+	display: inline-block;
+	width: 20px;
+	height:20px;
+	background-color: pink;
+}
+/*select{
+	position: relative;
+	top:70px;
+	left:50%;
+	width: 100px;
+	font-size: 20px;
+	color:grey ;
+	border:2px solid green;
+}
+	*/
+	</style>
+</head>
+<body>
+	<!-- <select id="selSpeed">
+        <option value="500">&nbsp;&nbsp;&nbsp;简单</option>
+        <option value="250" >&nbsp;&nbsp;&nbsp;一般 </option>
+        <option value="100">&nbsp;&nbsp;&nbsp;困难</option>
+	</select> -->
+<script type="text/javascript">
+
+//创建25行25列表格
+var table= document.createElement('div');
+ 	table.className = "table";
+for(var i = 0; i < 25; i++){
+	var tr = document.createElement('tr');
+	table.appendChild(tr);
+	for(var j = 0; j < 25; j++){
+		var td = document.createElement('td');
+		td.className = 'td';
+		tr.appendChild(td);
+	}
+}
+document.body.appendChild(table);
+
+//创建小蛇,蛇头
+var snack = [];
+function createSnack(){
+var snack1= document.createElement('div');
+	snack1.className = 'snack1';
+	snack1.style.left = Math.floor(Math.random() * 20) * 20 +'px';
+	snack1.style.top =Math.floor(Math.random() * 20) * 20 +'px';	
+	table.appendChild(snack1);
+	snack.push(snack1);
+	// if(snack1.style.top==0){
+	// 	table.removeChild(snack1);
+	// 	createSnack();
+	// }
+	
+}
+createSnack();
+
+var food ;
+function createFood () {
+		var sFood = true;
+		var sLeft = Math.floor(Math.random() * 20) * 20;
+		var sTop = Math.floor(Math.random() * 20) * 20;	
+		for(var i = 0;i < snack.length;i ++){
+			if(snack[i].offsetLeft == sLeft && snack[i].offsetTop == sTop){
+				sFood = false;
+				break;
+			}                                 //食物出现的坐标不能和蛇的坐标一样
+	}
+	while(!sFood);                          
+	food = document.createElement('div');
+	food.className = 'food';
+	food.style.left = sLeft + 'px';
+	food.style.top = sTop + 'px';
+	table.appendChild(food);
+}
+createFood();
+
+// 小蛇移动
+var direction = "up";    
+var timer = null;
+document.onclick= function  move() {
+	clearInterval(timer);
+	timer = setInterval(function () {                 
+		var snackHead = snack[0];
+		var nextplace= {                            
+		top: snackHead.offsetTop,
+		left: snackHead.offsetLeft
+		};
+		if(direction == "left"){
+		nextplace.left -= 20;
+		}
+		if(direction == "right"){
+		nextplace.left += 20;
+		}
+		if(direction == "down"){
+		nextplace.top += 20;
+		}
+		if(direction == "up"){
+		nextplace.top -= 20;
+		}
+		for(var i = 0;i < snack.length; i ++){              
+		var nowplace = {
+			left:snack[i].offsetLeft,
+			top:snack[i].offsetTop
+		};
+		snack[i].style.left = nextplace.left + 'px';
+		snack[i].style.top = nextplace.top + 'px';
+		nextplace = nowplace;
+		}
+
+		if(snack[0].offsetLeft == food.offsetLeft && snack[0].offsetTop == food.offsetTop){       //吃到食物
+		var snackBody = document.createElement('div1');
+		snackBody.className = 'snackbody';
+		table.appendChild(snackBody);                        //构建蛇身
+		snack.push(snackBody); 
+		table.removeChild(food);
+		createFood();
+		}
+		for(var i =1; i < snack.length; i ++){               //蛇头碰到蛇身
+		if(snack[0].offsetLeft == snack[i].offsetLeft && snack[0].offsetTop == snack[i].offsetTop ){
+			alert("游戏结束！");
+			clearInterval(timer);
+		}
+}
+		if (snack[0].offsetLeft < 0 || snack[0].offsetLeft>500 || snack[0].offsetTop <0 ||snack[0].offsetTop >500) {
+		alert("游戏结束！");                 //蛇头碰到墙壁
+		clearInterval(timer);
+	    }
+},250)
+}
+
+
+// document.getElementById("selSpeed").onclick=function(){
+// 	speed=this.value;
+// }
+
+document.onkeydown = function(e){
+		var e = e || window.event;
+		var keyCode = e.which || e.keyCode;     
+		// irfirefox2.0中不支持 window.event.keyCode
+		switch(keyCode){
+			case 37://left
+				if(direction != 'right'){
+					direction = 'left';
+				}
+				break;
+			case 38://up
+				if(direction != 'down'){
+					direction = 'up';
+				}			
+				break;
+			case 39://right
+				if(direction != 'left'){
+					direction = 'right';
+				}				
+				break;
+			case 40://down
+				if(direction != 'up'){
+					direction = 'down';
+				}
+				break;
+		}
+}	
+</script>
+</body>
+</html>
